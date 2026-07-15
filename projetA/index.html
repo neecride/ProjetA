@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎬 Éditeur de Métadonnées - Audio & Vidéo</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- En-tête -->
+        <header>
+            <h1>🎬 Éditeur de Métadonnées</h1>
+            <p class="subtitle">Audio & Vidéo - Glisse, renseigne, exécute !</p>
+        </header>
+
+        <!-- Zone de dépôt -->
+        <div class="drop-zone" id="dropZone">
+            <div class="icon">📂</div>
+            <p><strong>Glisse tes fichiers ici</strong></p>
+            <p class="hint">MP3, MP4, MKV, AVI, FLAC, WAV, OGG, etc.</p>
+            <input type="file" id="fileInput" multiple accept=".mp3,.mp4,.mkv,.avi,.flac,.wav,.ogg,.m4a,.mov,.webm" style="display: none;">
+        </div>
+
+        <!-- Options globales -->
+        <div class="global-options">
+            <h3>⚙️ Options globales</h3>
+            <div class="options-grid">
+                <div class="option-group">
+                    <label>Saison / Album</label>
+                    <input type="text" id="globalSeason" placeholder="Ex: 1 ou 'Vikings Saison 1'">
+                </div>
+                <div class="option-group">
+                    <label>Artiste / Série</label>
+                    <input type="text" id="globalArtist" placeholder="Ex: Vikings ou Artiste">
+                </div>
+                <div class="option-group">
+                    <label>Année</label>
+                    <input type="text" id="globalYear" placeholder="2024">
+                </div>
+                <div class="option-group">
+                    <label>Genre</label>
+                    <input type="text" id="globalGenre" placeholder="Drame, Rock, etc.">
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 10px;">
+                <button class="btn btn-secondary" onclick="appliquerOptionsGlobales()">📋 Appliquer à tous</button>
+            </div>
+        </div>
+
+        <!-- Liste des fichiers -->
+        <div id="fileList" class="file-list">
+            <p class="empty-message">Aucun fichier chargé</p>
+        </div>
+
+        <!-- Actions -->
+        <div class="actions">
+            <button class="btn btn-success" onclick="genererScript()">🚀 Générer et exécuter</button>
+            <button class="btn btn-danger" onclick="viderListe()">🗑️ Vider la liste</button>
+            <button class="btn btn-info" onclick="exporterScript()">💾 Exporter le script</button>
+        </div>
+
+        <!-- Progression -->
+        <div class="progress" id="progress">
+            <h3>⏳ Traitement en cours...</h3>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill">0%</div>
+            </div>
+            <p id="progressText">Initialisation...</p>
+        </div>
+
+        <!-- Journal -->
+        <div class="log" id="log">
+            <h3>📋 Journal</h3>
+            <div id="logContent"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
