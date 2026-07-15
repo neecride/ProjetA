@@ -220,6 +220,25 @@ function genererScript() {
     let script = `#!/bin/bash\n\n`;
     script += `# Script généré automatiquement\n`;
     script += `# Date: ${new Date().toLocaleString()}\n\n`;
+    
+    // === NOUVEAU : Détection automatique du dossier ===
+    script += `# Détection automatique du dossier contenant les fichiers\n`;
+    script += `SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"\n`;
+    script += `echo "📁 Dossier du script : $SCRIPT_DIR"\n\n`;
+    
+    // Vérifier si on est dans le bon dossier
+    script += `# Vérifier la présence des fichiers\n`;
+    files.forEach((file) => {
+        const name = file.name;
+        script += `if [ ! -f "$SCRIPT_DIR/${name}" ] && [ ! -f "${name}" ]; then\n`;
+        script += `    echo "⚠️  Fichier non trouvé : ${name}"\n`;
+        script += `    echo "   Assure-toi d'être dans le bon dossier"\n`;
+        script += `    exit 1\n`;
+        script += `fi\n`;
+    });
+    script += `\n`;
+    
+    // === Le reste du script ===
     script += `shopt -s nullglob\n\n`;
     script += `if ! command -v ffmpeg &> /dev/null; then\n`;
     script += `    echo "❌ ffmpeg requis mais pas installé."\n`;
@@ -229,10 +248,9 @@ function genererScript() {
     let total = files.length;
     
     files.forEach((file, index) => {
-        const path = file.path.replace(/\\/g, '/');
         const name = file.name;
-        const extension = path.split('.').pop(); // Récupère l'extension originale
-        const titre = file.titre || path.replace(/\.[^/.]+$/, '');
+        const extension = name.split('.').pop().toLowerCase();
+        const titre = file.titre || name.replace(/\.[^/.]+$/, '');
         const artiste = file.artiste || '';
         const album = file.album || '';
         const piste = file.piste || '';
@@ -240,10 +258,14 @@ function genererScript() {
         const genre = file.genre || '';
         const commentaire = file.commentaire || '';
         
+        // Utiliser le chemin avec détection
         script += `echo "📝 Traitement: ${name}"\n`;
-        // CORRECTION : extension adaptative
-        script += `temp_file="${path}.new.${extension}"\n`;
-        script += `ffmpeg -i "${path}" \\\n`;
+        script += `FILE_PATH="$SCRIPT_DIR/${name}"\n`;
+        script += `if [ ! -f "$FILE_PATH" ]; then\n`;
+        script += `    FILE_PATH="${name}"\n`;
+        script += `fi\n`;
+        script += `temp_file="\${FILE_PATH}.new.${extension}"\n`;
+        script += `ffmpeg -i "\$FILE_PATH" \\\n`;
         script += `        -metadata title="${titre}" \\\n`;
         if (artiste) script += `        -metadata artist="${artiste}" \\\n`;
         if (album) script += `        -metadata album="${album}" \\\n`;
@@ -251,20 +273,27 @@ function genererScript() {
         if (annee) script += `        -metadata date="${annee}" \\\n`;
         if (genre) script += `        -metadata genre="${genre}" \\\n`;
         if (commentaire) script += `        -metadata comment="${commentaire}" \\\n`;
+        
+        // Option spéciale pour MP3
+        if (extension === 'mp3') {
+            script += `        -write_id3v2 1 \\\n`;
+        }
+        
         script += `        -c copy \\\n`;
-        script += `        -y "$temp_file" 2>/dev/null\n\n`;
+        script += `        -y "\$temp_file" 2>/dev/null\n\n`;
         
         script += `if [ $? -eq 0 ]; then\n`;
-        script += `    mv "$temp_file" "${path}"\n`;
+        script += `    mv "\$temp_file" "\$FILE_PATH"\n`;
         script += `    echo "   ✅ ${name} traité"\n`;
         script += `else\n`;
         script += `    echo "   ❌ Erreur pour ${name}"\n`;
-        script += `    rm -f "$temp_file"\n`;
+        script += `    rm -f "\$temp_file"\n`;
         script += `fi\n\n`;
     });
     
     script += `echo "=========================================="\n`;
     script += `echo "🎉 Traitement terminé !"\n`;
+    script += `echo "📁 Fichiers dans : $SCRIPT_DIR"\n`;
     
     // Télécharger le script
     const blob = new Blob([script], { type: 'text/plain' });
@@ -293,10 +322,12 @@ function genererScript() {
     link.download = `script_metadonnees_${Date.now()}.sh`;
     link.click();
     
-    ajouterLog(`💾 Script téléchargé : script_metadonnees.sh`, 'info');
-    ajouterLog(`📌 Exécute-le avec : chmod +x script_metadonnees.sh && ./script_metadonnees.sh`, 'info');
+    ajouterLog(`💾 Script téléchargé`, 'info');
+    ajouterLog(`📌 Instructions :`, 'info');
+    ajouterLog(`   1. Déplace le script dans le dossier de tes fichiers`, 'info');
+    ajouterLog(`   2. chmod +x script_metadonnees.sh`, 'info');
+    ajouterLog(`   3. ./script_metadonnees.sh`, 'info');
 }
-
 // ============================================
 // EXPORTER LE SCRIPT
 // ============================================
