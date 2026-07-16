@@ -1,0 +1,21 @@
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+    color: #eee;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+
+    a{
+        color: #0080ff;         
+        text-decoration: none;
+        margin: 0 15px;
+    }
+
+    /* Au survol de la souris */
+    a:hover {
+        color: #ff6600;          
+        text-decoration: underline;
+    }   
