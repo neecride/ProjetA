@@ -9,3 +9,19 @@ PS : réaliser avec le peut de connaissance que j'ai sous linux je ne sais pas s
 ## J'ai ajouter une version avec serveur nodeJS 
 
 Il faut installer nodeJS lancer `❯ npm install` dans le dossier là où se trouve server.js pour ajouter les dépendances, et ensuite démarré le serveur avec `❯ node server.js`
+
+# Le run_serveur.sh est là pour du confort il n'est pas nésséssaire 
+
+# Utilisation
+
+## Rendre le script exécutable
+`chmod +x run_server.sh`
+
+## Lancer le serveur avec menu interactif
+`./run-server.sh`
+
+## Lancer directement le serveur
+`./run_server.sh --start`
+
+## Lancer en mode développement (redémarrage automatique)
+`./run_server.sh --dev`
